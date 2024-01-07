@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>This is start url</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            z-index: -1;
+        }
+
+        .content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            z-index: 1;
+        }
+        .searchtext{
+            position: absolute;
+            font-size: 100px;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: transparent; /* Hide the text */
+            text-align: center;
+            z-index: 1;
+            background-image: url('mustangimage.png'); /* Replace 'mustang_image.jpg' with your image URL */
+            background-size: cover;
+            -webkit-background-clip: text; /* Clip the background image to the text */
+            background-clip: text;
+            filter: drop-shadow(10px 0px 0px 0px  black);
+        }
+
+
+        form {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 1;
+        }
+
+        #searchInput {
+            padding: 10px;
+            font-size: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+        .recent-searches {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            color: white;
+            font-size: 18px;
+        }
+
+        /* Optional style for the recent searches list */
+        .recent-searches ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recent-searches ul li {
+            margin-bottom: 5px;
+            cursor: pointer;
+        }
+        .clear{
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <video autoplay muted loop class="video-background" id="bgVideo"oncontextmenu="return false;">
+        <source src="video2.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
+    <div class="searchtext">
+    </div>
+    <div class="content">
+        
+        <form id="searchForm" action="https://www.google.com/search" method="GET">
+            <input type="search" placeholder="Search..." name="q" id="searchInput"/>
+            <button type="submit">Submit</button>
+        </form>
+    </div>    
+    <div id="searchHistory" class="recent-searches">
+    </div>
+    <button id="clearHistoryButton" class="clear">Clear History</button>
+    <script>
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const clearHistoryButton = document.getElementById('clearHistoryButton');
+    let searchHistory = document.getElementById('searchHistory');
+
+        // Function to save recent searches to local storage
+        const saveRecentSearch = (query) => {
+            let searches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+            searches.unshift(query);
+            if (searches.length > 5) {
+                searches.pop();
+            }
+            localStorage.setItem('recentSearches', JSON.stringify(searches));
+        };
+        searchForm.addEventListener('submit', () => {
+      saveRecentSearch(searchInput.value);
+    });
+        // Function to display recent searches
+        const displayRecentSearches = () => {
+            const searches = JSON.parse(localStorage.getItem('recentSearches')) || [];
+            searchHistory.innerHTML = '';
+            searches.forEach((search) => {
+                const listItem = document.createElement('li');
+                listItem.textContent = search;
+                listItem.addEventListener('click', () => {
+                    searchInput.value = search;
+                    searchForm.submit();
+                });
+                searchHistory.appendChild(listItem);
+            });
+            
+        };
+
+        // Display recent searches when the page loads
+        displayRecentSearches();
+
+        clearHistoryButton.addEventListener('click', function() {
+            // Clear the search history
+            localStorage.removeItem('recentSearches');
+            searchHistory.innerHTML = ''; // Clear the displayed history
+        });
+        
+    </script>
+</body>
+</html>
